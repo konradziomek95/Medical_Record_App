@@ -51,3 +51,13 @@ class Reservation(models.Model):
         unique_together = ('owner', 'time_of_reservation')
 
 
+class Services(models.Model):
+    owner = models.ForeignKey(MedUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    price = models.PositiveIntegerField()
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=128)
+    address = models.CharField(max_length=128)
+    workers_list = models.ManyToManyField(MedUser)

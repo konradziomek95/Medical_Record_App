@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from med_record_app.views import RegisterMedUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('register/', RegisterMedUserView.as_view()),
+
 ]

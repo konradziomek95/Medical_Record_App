@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Med_Record_App',
+    'med_record_app',
 ]
 
 MIDDLEWARE = [
@@ -120,4 +120,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'Med_Record_App.MedUser'
+AUTH_USER_MODEL = 'med_record_app.MedUser'
