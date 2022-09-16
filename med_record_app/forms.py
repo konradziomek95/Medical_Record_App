@@ -27,4 +27,21 @@ class RegisterMedUSerForm(forms.Form):
             raise ValidationError('User with this login already exists.')
         return login
 
+class LoginForm(forms.Form):
+    login = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        self.user = None
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cd = super().clean()
+        login = cd.get('login')
+        password = cd.get('password')
+        user = authenticate(username=login, password=password)
+        if user is None:
+            raise ValidationError('Wrong login or password!')
+        self.user = user
+
 

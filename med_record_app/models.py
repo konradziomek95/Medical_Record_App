@@ -36,7 +36,7 @@ class MedicalRecord(models.Model):
     symptoms = models.TextField()
     tests = models.TextField()
     imaging_examination = models.BooleanField(default=False)
-    description_od_IE = models.TextField(null=True)
+    description_of_IE = models.TextField(null=True)
     medicines = models.TextField(null=True)
     medical_treatment = models.TextField(null=True)
     home_recommendation = models.TextField(null=True)
