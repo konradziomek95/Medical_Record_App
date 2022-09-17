@@ -33,6 +33,6 @@ urlpatterns = [
     path('location/list', ListOfLocations.as_view(), name='list_of_locations'),
     path('patient/add', CreatePatientView.as_view(), name='create_patient'),
     path('patient/list', ListOfPatients.as_view(), name='list_of_patients'),
-    path('patient/<int:id>', DeletePatient.as_view(), name ='delete_patient'),
+    path('patient/delete/<int:id>', DeletePatient.as_view(), name ='delete_patient'),
 
 ]

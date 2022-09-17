@@ -105,5 +105,6 @@ class DeletePatient(View):
 
         return redirect('list_of_patients')
 
+
 class UpdatePatient(UpdateView):
     pass
