@@ -1,0 +1,10 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    {% if warning %}
+        <form method="post">
+        {%  csrf_token %}
+        <p>{{ warning }}</p>
+        <button type="submit">Delate</button>
+        </form>
+    {% endif %}
+{% endblock %}

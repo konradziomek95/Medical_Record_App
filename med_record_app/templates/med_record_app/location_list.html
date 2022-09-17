@@ -1,0 +1,9 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <p>Locations</p>
+    <ul>
+        {% for elem in location_list %}
+            <li>{{ elem.name }} {{ elem.address }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

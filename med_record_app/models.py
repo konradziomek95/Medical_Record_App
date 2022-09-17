@@ -22,9 +22,9 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     PESEL = models.CharField(max_length=11, unique=True)
-    date_of_birth = models.DateField()
-    address = models.TextField()
-    contact = models.TextField()
+    date_of_birth = models.DateField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    contact = models.TextField(null=True, blank=True)
 
 
 class MedicalRecord(models.Model):

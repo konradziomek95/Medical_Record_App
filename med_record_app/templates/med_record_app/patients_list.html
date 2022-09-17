@@ -1,0 +1,9 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <p>Patients</p>
+    <ul>
+        {% for elem in patient_list %}
+            <li>{{ elem.last_name }} {{ elem.first_name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

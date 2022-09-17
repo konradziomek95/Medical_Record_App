@@ -17,13 +17,22 @@ from django.contrib import admin
 from django.urls import path
 from med_record_app.views import (RegisterMedUserView,
                                   HomepageView,
-                                  LoginView)
+                                  LoginView,
+                                  ListOfLocations,
+                                  CreateLocationView,
+                                  ListOfPatients,
+                                  CreatePatientView,
+                                  DeletePatient)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('homepage', HomepageView.as_view(), name='homepage'),
     path('register/', RegisterMedUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
-
+    path('location/add', CreateLocationView.as_view(), name='create_location'),
+    path('location/list', ListOfLocations.as_view(), name='list_of_locations'),
+    path('patient/add', CreatePatientView.as_view(), name='create_patient'),
+    path('patient/list', ListOfPatients.as_view(), name='list_of_patients'),
+    path('patient/<int:id>', DeletePatient.as_view(), name ='delete_patient'),
 
 ]

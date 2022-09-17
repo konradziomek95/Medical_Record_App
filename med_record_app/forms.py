@@ -27,6 +27,7 @@ class RegisterMedUSerForm(forms.Form):
             raise ValidationError('User with this login already exists.')
         return login
 
+
 class LoginForm(forms.Form):
     login = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
@@ -45,3 +46,8 @@ class LoginForm(forms.Form):
         self.user = user
 
 
+class AddMedUserToLocation(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        self.user = None
+        super().__init__(*args, **kwargs)
