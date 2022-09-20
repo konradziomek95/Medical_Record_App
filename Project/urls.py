@@ -22,7 +22,12 @@ from med_record_app.views import (RegisterMedUserView,
                                   CreateLocationView,
                                   ListOfPatients,
                                   CreatePatientView,
-                                  DeletePatient)
+                                  DeletePatient,
+                                  AddMedUserToLocation,
+                                  UpdatePatient,
+                                  CreateMedicalRecord,
+                                  PatientDetailsView
+                                  )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +38,10 @@ urlpatterns = [
     path('location/list', ListOfLocations.as_view(), name='list_of_locations'),
     path('patient/add', CreatePatientView.as_view(), name='create_patient'),
     path('patient/list', ListOfPatients.as_view(), name='list_of_patients'),
-    path('patient/delete/<int:id>', DeletePatient.as_view(), name ='delete_patient'),
+    path('patient/delete/<int:id>', DeletePatient.as_view(), name='delete_patient'),
+    path('patient/update/<int:id>', UpdatePatient.as_view(), name='update_patient'),
+    path('patient/<int:id>/record/add', CreateMedicalRecord.as_view(), name='create_medical_record'),
+    path('patient/details/<int:pk>', PatientDetailsView.as_view(), name='patient_details'),
+    path('location/user', AddMedUserToLocation.as_view(), name='add_user_to_location'),
 
 ]

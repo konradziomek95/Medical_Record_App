@@ -3,7 +3,7 @@
     <p>Patients</p>
     <ul>
         {% for elem in patient_list %}
-            <li>{{ elem.last_name }} {{ elem.first_name }}</li>
+            <li><a href="/patient/{{ elem.id }}/record/add">{{ elem.last_name }} {{ elem.first_name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

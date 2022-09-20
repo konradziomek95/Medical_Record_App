@@ -1,0 +1,14 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <label>Locations:
+            <select name="location">
+                {% for location in locations %} }}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <input type="submit" value="Send">
+    </form>
+{% endblock %}

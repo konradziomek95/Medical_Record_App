@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import FormView, CreateView, ListView, UpdateView
+from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView
 from .forms import (RegisterMedUSerForm,
-                    LoginForm)
+                    LoginForm,
+                    MedicalRecordForm)
 from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate
-from .models import MedUser, Location, Patient
+from .models import MedUser, Location, Patient, MedicalRecord
 
 
 # Create your views here.
@@ -33,14 +34,14 @@ class RegisterMedUserView(View):
             profession = cd['profession']
             email = cd['email']
             PWZ = cd['PWZ']
-            MedUser.objects.create_user(username=user,
-                                        password=password,
-                                        first_name=first_name,
-                                        last_name=last_name,
-                                        profession=profession,
-                                        email=email,
-                                        PWZ=PWZ
-                                        )
+            new_user = MedUser.objects.create_user(username=user,
+                                                   password=password,
+                                                   first_name=first_name,
+                                                   last_name=last_name,
+                                                   profession=profession,
+                                                   email=email,
+                                                   PWZ=PWZ
+                                                   )
             return redirect('/login/')
         ctx = {'form': form}
         return render(request, 'med_record_app/register.html', ctx)
@@ -73,7 +74,17 @@ class CreateLocationView(CreateView):
 
 class AddMedUserToLocation(View):
     def get(self, request, *args, **kwargs):
-        pass
+        locations = Location.objects.all()
+        ctx = {'locations': locations}
+        return render(request, 'med_record_app/add_user_to_location.html', ctx)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        location_id = request.POST.get('location')
+        location = get_object_or_404(Location, pk=int(location_id))
+        location.workers_list.add(user)
+        location.save()
+        return redirect('list_of_locations')
 
 
 class ListOfPatients(ListView):
@@ -92,7 +103,7 @@ class CreatePatientView(CreateView):
 class DeletePatient(View):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
-        patient = Patient.objects.get(pk=int(id))
+        patient = get_object_or_404(Patient, pk=id)
         warning = f'Do you reallly want to delate {patient.last_name} {patient.first_name} from database?'
         ctx = {'warning': warning,
                'patient': patient}
@@ -100,11 +111,48 @@ class DeletePatient(View):
 
     def post(self, request, *args, **kwargs):
         id = kwargs['id']
-        patient = Patient.objects.get(pk=id)
+        patient = get_object_or_404(Patient, pk=id)
         patient.delete()
 
         return redirect('list_of_patients')
 
 
 class UpdatePatient(UpdateView):
-    pass
+    model = Patient
+    fields = '__all__'
+    template_name_suffix = '_update_form'
+
+
+class PatientDetailsView(DetailView):
+    model = Patient
+
+
+class CreateMedicalRecord(View):
+    form_class = MedicalRecordForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        ctx = {'form': form}
+        return render(request, 'med_record_app/add_medical_record.html', ctx)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        id = kwargs['id']
+        if form.is_valid():
+            cd = form.cleaned_data
+            owner = self.request.user
+            patient = get_object_or_404(Patient, pk=id)
+            MedicalRecord.objects.create(patient=patient,
+                                         owner=owner,
+                                         diagnosis=cd['diagnosis'],
+                                         ICD_10=cd['ICD_10'],
+                                         symptoms=cd['symptoms'],
+                                         tests=cd['tests'],
+                                         imaging_examination=cd['imaging_examination'],
+                                         description_of_IE=cd['description_of_IE'],
+                                         medicines=cd['medicines'],
+                                         medical_treatment=cd['medical_treatment'],
+                                         home_recommendation=cd['home_recommendation']
+                                         )
+            return redirect('list_of_patients')
+        return render(request, 'med_record_app/add_medical_record.html', {'form': form})

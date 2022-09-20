@@ -22,9 +22,9 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     PESEL = models.CharField(max_length=11, unique=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    contact = models.TextField(null=True, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    contact = models.TextField(blank=True, null=True)
 
 
 class MedicalRecord(models.Model):
@@ -36,10 +36,10 @@ class MedicalRecord(models.Model):
     symptoms = models.TextField()
     tests = models.TextField()
     imaging_examination = models.BooleanField(default=False)
-    description_of_IE = models.TextField(null=True)
-    medicines = models.TextField(null=True)
-    medical_treatment = models.TextField(null=True)
-    home_recommendation = models.TextField(null=True)
+    description_of_IE = models.TextField(blank=True)
+    medicines = models.TextField(blank=True)
+    medical_treatment = models.TextField(blank=True)
+    home_recommendation = models.TextField(blank=True)
 
 
 class Reservation(models.Model):

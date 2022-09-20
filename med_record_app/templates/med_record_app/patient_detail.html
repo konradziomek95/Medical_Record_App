@@ -1,0 +1,14 @@
+{% extends 'med_record_app/base.html' %} }}
+{% block content %}
+    <p>{{ patient.first_name }} {{ patient.last_name }}</p>
+    <p>{{ patient.PESEL }}</p>
+    {% if patient.date_of_birth %}
+        <p>{{ patient.date_of_birth }}</p>
+    {%  endif %}
+  {% if patient.address %}
+        <p>{{ patient.address }}</p>
+    {%  endif %}
+      {% if patient.contact %}
+        <p>{{ patient.contact }}</p>
+    {%  endif %}
+{% endblock %}
