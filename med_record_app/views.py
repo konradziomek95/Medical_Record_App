@@ -3,9 +3,12 @@ from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView
 from .forms import (RegisterMedUSerForm,
                     LoginForm,
-                    MedicalRecordForm)
+                    MedicalRecordForm,
+                    ReservationForm,
+                    )
 from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import MedUser, Location, Patient, MedicalRecord
 
 
@@ -60,19 +63,23 @@ class LoginView(FormView):
         return response
 
 
-class ListOfLocations(ListView):
+class ListOfLocationsView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = Location
     template_name = 'med_record_app/location_list.html'
 
 
-class CreateLocationView(CreateView):
+class CreateLocationView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
     model = Location
     fields = ['name', 'address']
     template_name = 'med_record_app/add_location.html'
     success_url = reverse_lazy('list_of_locations')
 
 
-class AddMedUserToLocation(View):
+class AddMedUserToLocationView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def get(self, request, *args, **kwargs):
         locations = Location.objects.all()
         ctx = {'locations': locations}
@@ -87,20 +94,24 @@ class AddMedUserToLocation(View):
         return redirect('list_of_locations')
 
 
-class ListOfPatients(ListView):
+class ListOfPatientsView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = Patient
     template_name = 'med_record_app/patients_list.html'
     ordering = ['last_name']
 
 
-class CreatePatientView(CreateView):
+class CreatePatientView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
     model = Patient
     fields = ['first_name', 'last_name', 'PESEL']
     template_name = 'med_record_app/add_patient.html'
     success_url = reverse_lazy('list_of_patients')
 
 
-class DeletePatient(View):
+class DeletePatientView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
         patient = get_object_or_404(Patient, pk=id)
@@ -117,17 +128,20 @@ class DeletePatient(View):
         return redirect('list_of_patients')
 
 
-class UpdatePatient(UpdateView):
+class UpdatePatientView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
     model = Patient
     fields = '__all__'
     template_name_suffix = '_update_form'
 
 
-class PatientDetailsView(DetailView):
+class PatientDetailsView(LoginRequiredMixin, DetailView):
+    login_url = '/login/'
     model = Patient
 
 
-class CreateMedicalRecord(View):
+class CreateMedicalRecordView(LoginRequiredMixin, View):
+    login_url = '/login/'
     form_class = MedicalRecordForm
 
     def get(self, request, *args, **kwargs):
@@ -156,3 +170,14 @@ class CreateMedicalRecord(View):
                                          )
             return redirect('list_of_patients')
         return render(request, 'med_record_app/add_medical_record.html', {'form': form})
+
+
+class CreateReservationView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    form_class = ReservationForm
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        ctx = {'form': form}
+        return render(request, 'med_record_app/add_medical_record.html', ctx)
+
+

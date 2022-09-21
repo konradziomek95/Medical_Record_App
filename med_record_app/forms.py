@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
-from .models import MedUser, PROFESSION, Location, MedicalRecord, Patient
+from .models import MedUser, PROFESSION, Location, MedicalRecord, Patient, Reservation, WorkDay
 
 
 class RegisterMedUSerForm(forms.Form):
@@ -50,3 +50,9 @@ class MedicalRecordForm(forms.ModelForm):
     class Meta:
         model = MedicalRecord
         exclude = ['patient', 'owner', 'date']
+
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = Reservation
+        exclude = ['owner']

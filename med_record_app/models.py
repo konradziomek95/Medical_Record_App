@@ -8,8 +8,15 @@ PROFESSION = (
     (3, 'Physiotherapist'),
     (4, 'Dentist'),
     (5, 'Paramedic'),
-
 )
+DAY = ((1, 'Monday'),
+       (2, 'Tuesday'),
+       (3, 'Wednesday)'),
+       (4, 'Thursday'),
+       (5, 'Friday'),
+       (6, 'Saturday'),
+       (7, 'Sunday'),
+       )
 
 
 class MedUser(AbstractUser):
@@ -61,3 +68,11 @@ class Location(models.Model):
     name = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
     workers_list = models.ManyToManyField(MedUser)
+
+
+class WorkDay(models.Model):
+    owner = models.ForeignKey(MedUser, on_delete=models.CASCADE)
+    day = models.CharField(choices=DAY, max_length=24)
+    start = models.TimeField()
+    end = models.TimeField()
+    interval = models.IntegerField(max_length=3)
