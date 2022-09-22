@@ -11,7 +11,7 @@ PROFESSION = (
 )
 DAY = ((1, 'Monday'),
        (2, 'Tuesday'),
-       (3, 'Wednesday)'),
+       (3, 'Wednesday'),
        (4, 'Thursday'),
        (5, 'Friday'),
        (6, 'Saturday'),
@@ -75,4 +75,7 @@ class WorkDay(models.Model):
     day = models.CharField(choices=DAY, max_length=24)
     start = models.TimeField()
     end = models.TimeField()
-    interval = models.IntegerField(max_length=3)
+    interval = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('owner', 'day')

@@ -1,0 +1,9 @@
+{%  extends 'med_record_app/base.html' %}
+{% block content %}
+    List of your {{ user.first_name }} reservations:
+    <ol>
+    {% for reservation in reservations %}
+        <li>{{ reservation.time_of_reservation }}{{ reservation.patient }}</li>
+    {% endfor %}
+    </ol>
+{% endblock %}

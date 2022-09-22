@@ -1,7 +1,16 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
-from .models import MedUser, PROFESSION, Location, MedicalRecord, Patient, Reservation, WorkDay
+from .models import MedUser, PROFESSION, Location, MedicalRecord, Patient, Reservation, WorkDay, DAY
+import datetime
+
+
+class DateTimePickerInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
+
+
+class TimePickerInput(forms.TimeInput):
+    input_type = 'time'
 
 
 class RegisterMedUSerForm(forms.Form):
@@ -52,7 +61,39 @@ class MedicalRecordForm(forms.ModelForm):
         exclude = ['patient', 'owner', 'date']
 
 
-class ReservationForm(forms.ModelForm):
-    class Meta:
-        model = Reservation
-        exclude = ['owner']
+class ReservationForm(forms.Form):
+    time_of_reservation = forms.DateTimeField(widget=DateTimePickerInput())
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+    def clean_time_of_reservation(self):
+        user = self.user
+        cd = super().clean()
+        time_of_reservation = cd.get('time_of_reservation')
+        day_of_reservation = datetime.datetime.isoweekday(time_of_reservation)
+        if not WorkDay.objects.filter(owner=user).filter(day=day_of_reservation).exists():
+            raise ValidationError('Office is closed that day')
+        work_day = WorkDay.objects.get(day=day_of_reservation)
+        start = work_day.start
+        end = work_day.end
+        interval = work_day.interval
+        last_visit_delta = datetime.timedelta(hours=end.hour,
+                                              minutes=end.minute) - datetime.timedelta(minutes=interval)
+        last_visit_date = (datetime.datetime.min + last_visit_delta).time()
+        if time_of_reservation.time() < start or time_of_reservation.time() > last_visit_date:
+            raise ValidationError('booking time outside working hours')
+        start_date = time_of_reservation - datetime.timedelta(minutes=interval - 1)
+        end_date = time_of_reservation + datetime.timedelta(minutes=interval - 1)
+        if Reservation.objects.filter(time_of_reservation__range=(start_date, end_date)).exists():
+            raise ValidationError('booking time conflicts with another visit')
+        return time_of_reservation
+
+
+class WorkDayForm(forms.Form):
+    day = forms.ChoiceField(choices=DAY)
+    start = forms.TimeField(widget=TimePickerInput())
+    end = forms.TimeField(widget=TimePickerInput())
+    interval = forms.IntegerField(min_value=0)
+

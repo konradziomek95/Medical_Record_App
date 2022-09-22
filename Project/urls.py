@@ -26,13 +26,14 @@ from med_record_app.views import (RegisterMedUserView,
                                   AddMedUserToLocationView,
                                   UpdatePatientView,
                                   CreateMedicalRecordView,
-                                  PatientDetailsView
-                                  )
+                                  PatientDetailsView,
+                                  CreateReservationView,
+                                  CreateWorkDayView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('homepage', HomepageView.as_view(), name='homepage'),
-    path('register', RegisterMedUserView.as_view(), name='register'),
+    path('homepage/', HomepageView.as_view(), name='homepage'),
+    path('register/', RegisterMedUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('location/add', CreateLocationView.as_view(), name='create_location'),
     path('location/list', ListOfLocationsView.as_view(), name='list_of_locations'),
@@ -42,6 +43,8 @@ urlpatterns = [
     path('patient/update/<int:id>', UpdatePatientView.as_view(), name='update_patient'),
     path('patient/<int:id>/record/add', CreateMedicalRecordView.as_view(), name='create_medical_record'),
     path('patient/details/<int:pk>', PatientDetailsView.as_view(), name='patient_details'),
-    path('location/user', AddMedUserToLocationView.as_view(), name='add_user_to_location'),
+    path('location/user/', AddMedUserToLocationView.as_view(), name='add_user_to_location'),
+    path('calendar/add', CreateWorkDayView.as_view(), name='add_workday'),
+    path('reservation/add', CreateReservationView.as_view(), name='create_reservation'),
 
 ]

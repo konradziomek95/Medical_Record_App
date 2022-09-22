@@ -1,0 +1,16 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <label>Patients:
+            <select name="patient">
+                {% for patient in patients %} }}
+                    <option value="{{ patient.id }}">{{ patient.last_name }} {{ patient.first_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+            {{ form.as_p }}
+        <input type="submit" value="send">
+    </form>
+{% endblock %}}
+

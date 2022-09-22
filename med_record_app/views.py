@@ -1,15 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView
 from .forms import (RegisterMedUSerForm,
                     LoginForm,
                     MedicalRecordForm,
                     ReservationForm,
-                    )
+                    WorkDayForm)
 from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import MedUser, Location, Patient, MedicalRecord
+from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -81,7 +82,8 @@ class AddMedUserToLocationView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
-        locations = Location.objects.all()
+        locations = get_list_or_404(Location)
+        user = self.request.user
         ctx = {'locations': locations}
         return render(request, 'med_record_app/add_user_to_location.html', ctx)
 
@@ -146,8 +148,7 @@ class CreateMedicalRecordView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        ctx = {'form': form}
-        return render(request, 'med_record_app/add_medical_record.html', ctx)
+        return render(request, 'med_record_app/add_medical_record.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -172,12 +173,58 @@ class CreateMedicalRecordView(LoginRequiredMixin, View):
         return render(request, 'med_record_app/add_medical_record.html', {'form': form})
 
 
+class CreateWorkDayView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    form_class = WorkDayForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, 'med_record_app/add_workday.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            owner = self.request.user
+            WorkDay.objects.create(owner=owner,
+                                   day=cd['day'],
+                                   start=cd['start'],
+                                   end=cd['end'],
+                                   interval=cd['interval']
+                                   )
+            return redirect('list_of_patients')
+        return render(request, 'med_record_app/add_workday.html', {'form': form})
+
+
 class CreateReservationView(LoginRequiredMixin, View):
     login_url = '/login/'
     form_class = ReservationForm
+
     def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        ctx = {'form': form}
-        return render(request, 'med_record_app/add_medical_record.html', ctx)
+        owner = self.request.user
+        form = self.form_class(user=owner)
+        patients = get_list_or_404(Patient)
+        return render(request, 'med_record_app/add_reservation.html', {'form': form, 'patients': patients})
+
+    def post(self, request, *args, **kwargs):
+        owner = self.request.user
+        patients = get_list_or_404(Patient)
+        form = self.form_class(self.request.POST, user=owner)
+        patient = request.POST.get('patient')
+
+        if form.is_valid():
+            cd = form.cleaned_data
+            time_of_reservation = cd['time_of_reservation']
+            Reservation.objects.create(owner=owner, patient_id=patient,
+                                       time_of_reservation=time_of_reservation)
+            return redirect('list_of_patients')
+
+        return render(request, 'med_record_app/add_reservation.html', {'form': form, 'patients': patients})
 
 
+class ListOfReservationsView(View):
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        reservations = get_list_or_404(Reservation, owner=user)
+
+        return render(request, 'med_record_app/reservation_list.html', {'reservations': reservations})
