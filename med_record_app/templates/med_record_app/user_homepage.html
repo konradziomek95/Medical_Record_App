@@ -1,0 +1,14 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <p>User Hompeage</p>
+    <p>Hello {{ user.first_name }} {{ user.last_name}}</p>
+    <a href="/patient/add"><p>New patient</p></a>
+    <a href="/patient/list"><p>Patient List</p></a>
+    <a href="/location/add"><p>New Location</p></a>
+    <a href="/location/list"><p>Location list</p></a>
+    <a href="/reservation/add"><p>New Reservation</p></a>
+    <a href="/calendar/add"><p>New WorkDay</p></a>
+    {% for reservation in reservations %}
+        <p>{{ reservation }}</p>
+    {% endfor %}
+{%  endblock %}

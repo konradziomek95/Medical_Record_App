@@ -3,7 +3,8 @@
     List of your {{ user.first_name }} reservations:
     <ol>
     {% for reservation in reservations %}
-        <li>{{ reservation.time_of_reservation }}{{ reservation.patient }}</li>
+        <li>{{ reservation.time_of_reservation }} {{ reservation.patient.last_name }}
+         {{ reservation.patient.first_name }}</li>
     {% endfor %}
     </ol>
 {% endblock %}

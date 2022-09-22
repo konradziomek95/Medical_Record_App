@@ -8,9 +8,13 @@
 {% block content %}
 {% endblock %}
 <footer>
- {% if user %}
-  {{ user.username }}
-    {%  endif %}
+ {% if user.is_authenticated %}
+     <p>Currently logged user: {{ user.username }}</p>
+     <p>Last login : {{ user.last_login }}</p>
+     <p><a href="/logout"><button>Logout</button></a></p>
+  {% else %}
+     <a href="/login/"><p>Login</p></a>
+  {%  endif %}
 </footer>
 </body>
 </html>

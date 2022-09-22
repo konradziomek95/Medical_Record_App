@@ -96,4 +96,3 @@ class WorkDayForm(forms.Form):
     start = forms.TimeField(widget=TimePickerInput())
     end = forms.TimeField(widget=TimePickerInput())
     interval = forms.IntegerField(min_value=0)
-

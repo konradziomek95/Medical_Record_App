@@ -18,6 +18,8 @@ from django.urls import path
 from med_record_app.views import (RegisterMedUserView,
                                   HomepageView,
                                   LoginView,
+                                  LogoutView,
+                                  LoggedInHomepageView,
                                   ListOfLocationsView,
                                   CreateLocationView,
                                   ListOfPatientsView,
@@ -28,13 +30,16 @@ from med_record_app.views import (RegisterMedUserView,
                                   CreateMedicalRecordView,
                                   PatientDetailsView,
                                   CreateReservationView,
-                                  CreateWorkDayView)
+                                  CreateWorkDayView,
+                                  ListOfReservationsView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('homepage/', HomepageView.as_view(), name='homepage'),
     path('register/', RegisterMedUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('user/homepage/', LoggedInHomepageView.as_view(), name='user_homepage'),
     path('location/add', CreateLocationView.as_view(), name='create_location'),
     path('location/list', ListOfLocationsView.as_view(), name='list_of_locations'),
     path('patient/add', CreatePatientView.as_view(), name='create_patient'),
@@ -46,5 +51,6 @@ urlpatterns = [
     path('location/user/', AddMedUserToLocationView.as_view(), name='add_user_to_location'),
     path('calendar/add', CreateWorkDayView.as_view(), name='add_workday'),
     path('reservation/add', CreateReservationView.as_view(), name='create_reservation'),
+    path('reservation/list/', ListOfReservationsView.as_view(), name='list_of_reservations')
 
 ]

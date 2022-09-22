@@ -1,22 +1,22 @@
+import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.views import View
-from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView
+from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, RedirectView, TemplateView
 from .forms import (RegisterMedUSerForm,
                     LoginForm,
                     MedicalRecordForm,
                     ReservationForm,
                     WorkDayForm)
 from django.urls import reverse_lazy
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
-from django.http import HttpResponse
 
 
 # Create your views here.
-class HomepageView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'med_record_app/homepage.html')
+class HomepageView(TemplateView):
+    template_name = 'med_record_app/homepage.html'
 
 
 class RegisterMedUserView(View):
@@ -54,7 +54,7 @@ class RegisterMedUserView(View):
 class LoginView(FormView):
     template_name = 'med_record_app/login.html'
     form_class = LoginForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('user_homepage')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -62,6 +62,24 @@ class LoginView(FormView):
         user = authenticate(username=cd['login'], password=cd['password'])
         login(self.request, user)
         return response
+
+
+class LogoutView(RedirectView):
+    url = reverse_lazy('homepage')
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, **kwargs)
+
+
+class LoggedInHomepageView(LoginRequiredMixin,TemplateView):
+    login_url = '/login/'
+    template_name = 'med_record_app/user_homepage.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reservations'] = Reservation.objects.filter(time_of_reservation__day=datetime.datetime.today().day)
+        return context
 
 
 class ListOfLocationsView(LoginRequiredMixin, ListView):
@@ -117,7 +135,7 @@ class DeletePatientView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
         patient = get_object_or_404(Patient, pk=id)
-        warning = f'Do you reallly want to delate {patient.last_name} {patient.first_name} from database?'
+        warning = f'Do you really want to delete {patient.last_name} {patient.first_name} from database?'
         ctx = {'warning': warning,
                'patient': patient}
         return render(request, 'med_record_app/delete_patient.html', ctx)
@@ -222,7 +240,9 @@ class CreateReservationView(LoginRequiredMixin, View):
         return render(request, 'med_record_app/add_reservation.html', {'form': form, 'patients': patients})
 
 
-class ListOfReservationsView(View):
+class ListOfReservationsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def get(self, request, *args, **kwargs):
         user = self.request.user
         reservations = get_list_or_404(Reservation, owner=user)
