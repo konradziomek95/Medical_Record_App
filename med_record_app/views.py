@@ -1,5 +1,4 @@
 import datetime
-
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, RedirectView, TemplateView
@@ -11,6 +10,7 @@ from .forms import (RegisterMedUSerForm,
 from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import IntegrityError
 from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
 
 
@@ -38,14 +38,14 @@ class RegisterMedUserView(View):
             profession = cd['profession']
             email = cd['email']
             PWZ = cd['PWZ']
-            new_user = MedUser.objects.create_user(username=user,
-                                                   password=password,
-                                                   first_name=first_name,
-                                                   last_name=last_name,
-                                                   profession=profession,
-                                                   email=email,
-                                                   PWZ=PWZ
-                                                   )
+            MedUser.objects.create_user(username=user,
+                                        password=password,
+                                        first_name=first_name,
+                                        last_name=last_name,
+                                        profession=profession,
+                                        email=email,
+                                        PWZ=PWZ
+                                        )
             return redirect('/login/')
         ctx = {'form': form}
         return render(request, 'med_record_app/register.html', ctx)
@@ -72,7 +72,7 @@ class LogoutView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
-class LoggedInHomepageView(LoginRequiredMixin,TemplateView):
+class LoggedInHomepageView(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     template_name = 'med_record_app/user_homepage.html'
 
@@ -101,7 +101,6 @@ class AddMedUserToLocationView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         locations = get_list_or_404(Location)
-        user = self.request.user
         ctx = {'locations': locations}
         return render(request, 'med_record_app/add_user_to_location.html', ctx)
 
@@ -153,6 +152,7 @@ class UpdatePatientView(LoginRequiredMixin, UpdateView):
     model = Patient
     fields = '__all__'
     template_name_suffix = '_update_form'
+    success_url = reverse_lazy('list_of_patients')
 
 
 class PatientDetailsView(LoginRequiredMixin, DetailView):
@@ -191,6 +191,11 @@ class CreateMedicalRecordView(LoginRequiredMixin, View):
         return render(request, 'med_record_app/add_medical_record.html', {'form': form})
 
 
+class MedicalRecordView(LoginRequiredMixin, DetailView):
+    login_url = '/login/'
+    model = MedicalRecord
+
+
 class CreateWorkDayView(LoginRequiredMixin, View):
     login_url = '/login/'
     form_class = WorkDayForm
@@ -204,12 +209,15 @@ class CreateWorkDayView(LoginRequiredMixin, View):
         if form.is_valid():
             cd = form.cleaned_data
             owner = self.request.user
-            WorkDay.objects.create(owner=owner,
-                                   day=cd['day'],
-                                   start=cd['start'],
-                                   end=cd['end'],
-                                   interval=cd['interval']
-                                   )
+            try:
+                WorkDay.objects.create(owner=owner,
+                                       day=cd['day'],
+                                       start=cd['start'],
+                                       end=cd['end'],
+                                       interval=cd['interval']
+                                       )
+            except IntegrityError:
+                return redirect('list_of_reservations')
             return redirect('list_of_patients')
         return render(request, 'med_record_app/add_workday.html', {'form': form})
 
@@ -248,3 +256,13 @@ class ListOfReservationsView(LoginRequiredMixin, View):
         reservations = get_list_or_404(Reservation, owner=user)
 
         return render(request, 'med_record_app/reservation_list.html', {'reservations': reservations})
+
+
+class ListOfWorkDaysView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        calendar = get_list_or_404(WorkDay, owner=user)
+
+        return render(request, 'med_record_app/workday_list.html', {'calendar': calendar})

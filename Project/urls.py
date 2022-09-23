@@ -10,7 +10,7 @@ Class-based views
     1. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
-    1. Import the include() function: from django.urls import include, path
+    1. Import  include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
@@ -31,7 +31,8 @@ from med_record_app.views import (RegisterMedUserView,
                                   PatientDetailsView,
                                   CreateReservationView,
                                   CreateWorkDayView,
-                                  ListOfReservationsView)
+                                  ListOfReservationsView,
+                                  ListOfWorkDaysView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,12 +46,13 @@ urlpatterns = [
     path('patient/add', CreatePatientView.as_view(), name='create_patient'),
     path('patient/list', ListOfPatientsView.as_view(), name='list_of_patients'),
     path('patient/delete/<int:id>', DeletePatientView.as_view(), name='delete_patient'),
-    path('patient/update/<int:id>', UpdatePatientView.as_view(), name='update_patient'),
+    path('patient/update/<int:pk>', UpdatePatientView.as_view(), name='update_patient'),
     path('patient/<int:id>/record/add', CreateMedicalRecordView.as_view(), name='create_medical_record'),
     path('patient/details/<int:pk>', PatientDetailsView.as_view(), name='patient_details'),
     path('location/user/', AddMedUserToLocationView.as_view(), name='add_user_to_location'),
-    path('calendar/add', CreateWorkDayView.as_view(), name='add_workday'),
+    path('calendar/add/', CreateWorkDayView.as_view(), name='add_workday'),
+    path('calendar/list/', ListOfWorkDaysView.as_view(), name='calendar'),
     path('reservation/add', CreateReservationView.as_view(), name='create_reservation'),
-    path('reservation/list/', ListOfReservationsView.as_view(), name='list_of_reservations')
+    path('reservation/list/', ListOfReservationsView.as_view(), name='list_of_reservations'),
 
 ]

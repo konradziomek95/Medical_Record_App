@@ -1,0 +1,20 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    List of your {{ user.first_name }} working days:
+    <table>
+        <thead>
+        <th>Day</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Interval</th>
+        </thead>
+        <tbody>
+        {% for workday in calendar %}
+            <td>{{ workday.get_day_display}}</td>
+            <td>{{ workday.start }}</td>
+            <td>{{workday.end}}</td>
+            <td>{{ workday.interval }}</td>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

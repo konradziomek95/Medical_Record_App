@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from .models import MedUser, PROFESSION, Location, MedicalRecord, Patient, Reservation, WorkDay, DAY
 import datetime
+from django.utils import timezone
 
 
 class DateTimePickerInput(forms.DateTimeInput):
@@ -72,6 +73,8 @@ class ReservationForm(forms.Form):
         user = self.user
         cd = super().clean()
         time_of_reservation = cd.get('time_of_reservation')
+        if time_of_reservation < timezone.now():
+            raise ValidationError('Reservation in the past is not allowed')
         day_of_reservation = datetime.datetime.isoweekday(time_of_reservation)
         if not WorkDay.objects.filter(owner=user).filter(day=day_of_reservation).exists():
             raise ValidationError('Office is closed that day')

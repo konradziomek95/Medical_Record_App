@@ -1,0 +1,8 @@
+{%  extends 'med_record_app/base.html' %}
+<p>{{ medicalrecord.id }}</p>
+<p>{{ medicalrecord.date }}</p>
+<p>{{ medicalrecord.patient.first_name }} {{ medicalrecord.patient.last_name }}</p>
+<p>{{ medicalrecord.owner.last_name }}</p>
+{% block content %}
+
+{%  endblock %}
