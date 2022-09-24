@@ -33,7 +33,8 @@ from med_record_app.views import (RegisterMedUserView,
                                   CreateWorkDayView,
                                   ListOfReservationsView,
                                   ListOfWorkDaysView,
-                                  MedicalRecordView)
+                                  MedicalRecordView,
+                                  ListOfMedicalRecords)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -56,5 +57,6 @@ urlpatterns = [
     path('reservation/add/', CreateReservationView.as_view(), name='create_reservation'),
     path('reservation/list/', ListOfReservationsView.as_view(), name='list_of_reservations'),
     path('record/details/<int:pk>/', MedicalRecordView.as_view(), name='record_details'),
+    path('record/list/', ListOfMedicalRecords.as_view(), name='list_of_records'),
 
 ]

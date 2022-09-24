@@ -20,6 +20,7 @@ from django.db import IntegrityError
 from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
 from django.http import Http404
 
+
 # Create your views here.
 class HomepageView(TemplateView):
     """
@@ -291,3 +292,10 @@ class ListOfWorkDaysView(LoginRequiredMixin, View):
         calendar = get_list_or_404(WorkDay, owner=user)
 
         return render(request, 'med_record_app/workday_list.html', {'calendar': calendar})
+
+
+class ListOfMedicalRecords(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = MedicalRecord
+    template_name = 'med_record_app/medical_records_list.html'
+    ordering = ['date']

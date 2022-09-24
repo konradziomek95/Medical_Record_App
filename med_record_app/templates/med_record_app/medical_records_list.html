@@ -1,0 +1,11 @@
+{% extends 'med_record_app/base.html' %}
+{% block content %}
+    <ul>
+        {% for record in medicalrecord_list %}
+            <li>{{ record.patient.last_name }} {{ record.patient.first_name }} {{ record.date }}
+                <a href="/record/details/{{ record.pk }}">
+                <button>Details</button>
+            </a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
