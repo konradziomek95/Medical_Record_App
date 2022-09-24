@@ -18,7 +18,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
-
+from django.http import Http404
 
 # Create your views here.
 class HomepageView(TemplateView):
@@ -206,7 +206,7 @@ class CreateMedicalRecordView(LoginRequiredMixin, View):
                                          medical_treatment=cd['medical_treatment'],
                                          home_recommendation=cd['home_recommendation']
                                          )
-            return redirect('list_of_patients')
+            return redirect('user_homepage')
         return render(request, 'med_record_app/add_medical_record.html', {'form': form})
 
 
@@ -240,7 +240,7 @@ class CreateWorkDayView(LoginRequiredMixin, View):
                                        )
             except IntegrityError:
                 return redirect('list_of_reservations')
-            return redirect('list_of_patients')
+            return redirect('user_homepage')
         return render(request, 'med_record_app/add_workday.html', {'form': form})
 
 

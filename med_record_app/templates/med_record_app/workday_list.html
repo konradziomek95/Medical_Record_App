@@ -10,10 +10,12 @@
         </thead>
         <tbody>
         {% for workday in calendar %}
-            <td>{{ workday.get_day_display}}</td>
-            <td>{{ workday.start }}</td>
-            <td>{{workday.end}}</td>
-            <td>{{ workday.interval }}</td>
+            <tr>
+                <td>{{ workday.day }}</td>
+                <td>{{ workday.start }}</td>
+                <td>{{ workday.end }}</td>
+                <td>{{ workday.interval }}</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
