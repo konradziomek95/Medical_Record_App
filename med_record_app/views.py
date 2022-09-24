@@ -1,7 +1,13 @@
 import datetime
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.views import View
-from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, RedirectView, TemplateView
+from django.views.generic import (FormView,
+                                  CreateView,
+                                  ListView,
+                                  UpdateView,
+                                  DetailView,
+                                  RedirectView,
+                                  TemplateView)
 from .forms import (RegisterMedUSerForm,
                     LoginForm,
                     MedicalRecordForm,
@@ -16,6 +22,9 @@ from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservat
 
 # Create your views here.
 class HomepageView(TemplateView):
+    """
+    Homepage view for not logged-in.
+    """
     template_name = 'med_record_app/homepage.html'
 
 
@@ -73,6 +82,9 @@ class LogoutView(RedirectView):
 
 
 class LoggedInHomepageView(LoginRequiredMixin, TemplateView):
+    """
+    Main page for logged-in user.
+    """
     login_url = '/login/'
     template_name = 'med_record_app/user_homepage.html'
 
@@ -97,6 +109,10 @@ class CreateLocationView(LoginRequiredMixin, CreateView):
 
 
 class AddMedUserToLocationView(LoginRequiredMixin, View):
+    """
+    Add logged-in user to selected location .
+    """
+
     login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
@@ -161,6 +177,9 @@ class PatientDetailsView(LoginRequiredMixin, DetailView):
 
 
 class CreateMedicalRecordView(LoginRequiredMixin, View):
+    """
+    Creates medical record for selected patient
+    """
     login_url = '/login/'
     form_class = MedicalRecordForm
 
@@ -197,6 +216,9 @@ class MedicalRecordView(LoginRequiredMixin, DetailView):
 
 
 class CreateWorkDayView(LoginRequiredMixin, View):
+    """
+    Creates one work day for logged-in user.
+    """
     login_url = '/login/'
     form_class = WorkDayForm
 
@@ -223,6 +245,9 @@ class CreateWorkDayView(LoginRequiredMixin, View):
 
 
 class CreateReservationView(LoginRequiredMixin, View):
+    """
+    Creates visit reservation for logged-in user .
+    """
     login_url = '/login/'
     form_class = ReservationForm
 

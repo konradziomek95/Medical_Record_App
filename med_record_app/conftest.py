@@ -39,3 +39,17 @@ def locations():
     location3.workers_list.add(user)
     assert Location.objects.get(name='name3')
     return location1, location2, location3
+
+
+@pytest.fixture
+def location():
+    return Location.objects.create(name='Miasto', address='address nieznany')
+
+
+@pytest.fixture
+def patients():
+    patient1 = Patient.objects.create(first_name='Zofia', last_name='Zakała', PESEL='11111111111')
+    patient2 = Patient.objects.create(first_name='Antek', last_name='Miły', PESEL='22222222222')
+    patient3 = Patient.objects.create(first_name='Katarzyna', last_name='Wielka', PESEL='33333333333')
+
+    return patient1, patient2, patient3

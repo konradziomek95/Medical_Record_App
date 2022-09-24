@@ -15,6 +15,9 @@ class TimePickerInput(forms.TimeInput):
 
 
 class RegisterMedUSerForm(forms.Form):
+    """
+    Register form with password and username validation.
+    """
     login = forms.CharField(max_length=128)
     password1 = forms.CharField(label='password', max_length=64)
     password2 = forms.CharField(label='re-enter password', max_length=64)
@@ -39,6 +42,9 @@ class RegisterMedUSerForm(forms.Form):
 
 
 class LoginForm(forms.Form):
+    """
+    Login form with authentication login and password.
+    """
     login = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
 
@@ -63,6 +69,10 @@ class MedicalRecordForm(forms.ModelForm):
 
 
 class ReservationForm(forms.Form):
+    """
+    Reservation form with validation whether
+    the selected time and day meets conditions of user working day.
+    """
     time_of_reservation = forms.DateTimeField(widget=DateTimePickerInput())
 
     def __init__(self, *args, **kwargs):
@@ -70,6 +80,10 @@ class ReservationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean_time_of_reservation(self):
+        """
+         checks if the selected date has not been in the past, is no longer busy,
+         is during the user's work and does not interfere with other visits.
+        """
         user = self.user
         cd = super().clean()
         time_of_reservation = cd.get('time_of_reservation')
