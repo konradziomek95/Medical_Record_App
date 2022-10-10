@@ -1,9 +1,6 @@
 import datetime
-
-from django.test import TestCase
 import pytest
 from med_record_app.models import MedUser, Location, Patient
-from datetime import date
 
 
 # Create your tests here.
@@ -15,7 +12,7 @@ def test_homepage_view(client):
 
 @pytest.mark.django_db
 def test_create_user(client, django_user_model):
-    user = django_user_model.objects.create_user(
+    django_user_model.objects.create_user(
         username='someone', password='password'
     )
     assert MedUser.objects.get(username='someone')

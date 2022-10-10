@@ -1,6 +1,6 @@
 import pytest
 
-from med_record_app.models import MedUser, Location, Patient, MedicalRecord, Reservation, WorkDay
+from med_record_app.models import MedUser, Location, Patient
 
 
 @pytest.fixture

@@ -18,7 +18,6 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from .models import MedUser, Location, Patient, MedicalRecord, WorkDay, Reservation
-from django.http import Http404
 
 
 # Create your views here.
